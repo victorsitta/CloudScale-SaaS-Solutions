@@ -127,7 +127,7 @@ Esse último exemplo demonstra a regra de conduta do prompt: o agente nunca inve
 
 ## ☁️ Deploy na Nuvem - Streamlit Community Cloud
 
-> **Status:** ⏳ Deploy ainda **não realizado** — pendente de publicação.
+> **Status:** ✅ **Em produção:** [https://cloudscalesolutions.streamlit.app/](https://cloudscalesolutions.streamlit.app/)
 
 A aplicação é publicada gratuitamente no [Streamlit Community Cloud](https://streamlit.io/cloud), que builda direto a partir deste repositório (sem necessidade de Docker ou de gerenciar uma VM).
 
@@ -145,8 +145,7 @@ A aplicação é publicada gratuitamente no [Streamlit Community Cloud](https://
 5. A aplicação fica disponível em uma URL pública no formato `https://<nome-do-app>.streamlit.app`.
 
 ### Demonstração do Agente em Produção:
-> [!IMPORTANT]
-> **[INSERIR LINK PÚBLICO E/OU PRINT DO AGENTE RODANDO NO STREAMLIT COMMUNITY CLOUD AQUI]**
+Acesse e teste diretamente em: **[cloudscalesolutions.streamlit.app](https://cloudscalesolutions.streamlit.app/)**
 
 ---
 

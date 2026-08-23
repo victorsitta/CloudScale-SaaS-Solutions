@@ -19,9 +19,6 @@ try:
 except Exception:
     pass
 
-# Provedor de LLM ativo: "groq" ou "cohere"
-LLM_PROVIDER = os.getenv("LLM_PROVIDER", "groq").lower()
-
 # Configurações da Groq
 GROQ_API_KEY = os.getenv("GROQ_API_KEY", "")
 GROQ_MODEL = os.getenv("GROQ_MODEL", "llama-3.3-70b-versatile")
@@ -29,6 +26,17 @@ GROQ_MODEL = os.getenv("GROQ_MODEL", "llama-3.3-70b-versatile")
 # Configurações da Cohere
 COHERE_API_KEY = os.getenv("COHERE_API_KEY", "")
 COHERE_MODEL = os.getenv("COHERE_MODEL", "command-a-03-2025")
+
+# Provedor de LLM ativo: "groq" ou "cohere". Se LLM_PROVIDER não for definido
+# explicitamente, detecta sozinho pelo que estiver preenchido (evita erro de
+# configuração quando só uma das chaves foi cadastrada nas Secrets da nuvem).
+_provider_env = os.getenv("LLM_PROVIDER", "").lower()
+if _provider_env in ("groq", "cohere"):
+    LLM_PROVIDER = _provider_env
+elif COHERE_API_KEY and not GROQ_API_KEY:
+    LLM_PROVIDER = "cohere"
+else:
+    LLM_PROVIDER = "groq"
 
 # Senha para desbloquear ações administrativas na UI (trocar chave, reindexar, upload)
 ADMIN_PASSWORD = os.getenv("ADMIN_PASSWORD", "")
