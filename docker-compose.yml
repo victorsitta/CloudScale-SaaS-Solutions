@@ -1,0 +1,11 @@
+version: '3.8'
+
+services:
+  cloudscale-rag-agent:
+    build: .
+    container_name: cloudscale_rag_app
+    ports:
+      - "8501:8501"
+    environment:
+      - GROQ_API_KEY=${GROQ_API_KEY}
+    restart: always

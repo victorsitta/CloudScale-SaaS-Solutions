@@ -1,0 +1,17 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+venv/
+env/
+.env
+
+# Banco de Vetores Local & Uploads
+faiss_index/
+data_uploaded/
+
+# IDEs
+.vscode/
+.idea/
+.DS_Store

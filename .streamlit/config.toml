@@ -1,0 +1,11 @@
+[server]
+# Evita que o Streamlit fique escaneando pacotes gigantes (torch/transformers)
+# dentro da venv a cada rerun — isso deixava a abertura/interação bem mais lenta.
+fileWatcherType = "none"
+headless = true
+
+[browser]
+gatherUsageStats = false
+
+[client]
+toolbarMode = "minimal"
