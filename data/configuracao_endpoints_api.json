@@ -1,0 +1,52 @@
+{
+    "api_name": "CloudScale REST API",
+    "version": "v1",
+    "base_url": "https://api.cloudscale.com/v1",
+    "endpoints": [
+        {
+            "path": "/v1/auth",
+            "method": "POST",
+            "description": "Autenticacao do cliente e geracao de JWT temporario.",
+            "required_parameters": [
+                "client_id",
+                "client_secret"
+            ],
+            "optional_parameters": [],
+            "error_codes": {
+                "400": "Bad Request - Parametros ausentes",
+                "401": "Unauthorized - Credenciais invalidas"
+            }
+        },
+        {
+            "path": "/v1/users",
+            "method": "GET",
+            "description": "Lista de usuarios administradores da conta cloud.",
+            "required_parameters": [],
+            "optional_parameters": [
+                "page",
+                "limit"
+            ],
+            "error_codes": {
+                "401": "Unauthorized - Token expirado",
+                "403": "Forbidden - Permissao insuficiente"
+            }
+        },
+        {
+            "path": "/v1/billing",
+            "method": "GET",
+            "description": "Recupera informacoes de faturamento, faturas abertas e plano ativo.",
+            "required_parameters": [
+                "account_id"
+            ],
+            "optional_parameters": [],
+            "error_codes": {
+                "401": "Unauthorized - JWT invalido",
+                "404": "Not Found - Account ID nao encontrado"
+            }
+        }
+    ],
+    "rate_limits": {
+        "global_default": "100 req/min",
+        "error_on_exceed": "HTTP 429 Too Many Requests"
+    }
+}
