@@ -346,6 +346,15 @@ except Exception as e:
     st.error(f"Erro ao inicializar o motor de inteligência RAG: {e}")
     rag_engine = None
 
+# Primeira execução em um ambiente novo (ex: Streamlit Community Cloud): o
+# faiss_index/ não é versionado no Git, então a base é indexada automaticamente
+# a partir dos documentos oficiais em data/, sem exigir desbloqueio administrativo.
+if rag_engine and rag_engine.vector_store is None and config.DATA_DIR.exists() and any(config.DATA_DIR.iterdir()):
+    with st.spinner("Primeira execução: indexando a base de conhecimento oficial..."):
+        initial_docs = UniversalDocumentLoader.load_directory(config.DATA_DIR)
+        if initial_docs:
+            rag_engine.initialize_vector_store(initial_docs)
+
 # 3. Funções Auxiliares
 def get_all_indexed_files():
     """Recupera a lista de todos os arquivos indexados das pastas data/ e data_uploaded/"""

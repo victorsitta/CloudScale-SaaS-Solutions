@@ -5,8 +5,19 @@ from dotenv import load_dotenv
 # Encontra a raiz do projeto (alura-challenge-agente-saas)
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 
-# Carrega as variáveis de ambiente do arquivo .env
+# Carrega as variáveis de ambiente do arquivo .env (uso local)
 load_dotenv(PROJECT_ROOT / ".env")
+
+# No Streamlit Community Cloud não existe arquivo .env: as chaves são
+# cadastradas em "Secrets" e expostas via st.secrets. Aqui elas são
+# replicadas para os.environ para que o resto do código (que usa
+# os.getenv) funcione igual em ambos os ambientes, sem duplicar lógica.
+try:
+    import streamlit as st
+    for _key in list(st.secrets.keys()):
+        os.environ.setdefault(_key, str(st.secrets[_key]))
+except Exception:
+    pass
 
 # Provedor de LLM ativo: "groq" ou "cohere"
 LLM_PROVIDER = os.getenv("LLM_PROVIDER", "groq").lower()

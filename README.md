@@ -6,7 +6,6 @@
 [![FAISS](https://img.shields.io/badge/VectorDB-FAISS-green.svg?style=for-the-badge)](https://github.com/facebookresearch/faiss)
 [![Groq](https://img.shields.io/badge/LLM-Groq-orange?style=for-the-badge)](https://groq.com/)
 [![Cohere](https://img.shields.io/badge/LLM-Cohere-39594D?style=for-the-badge)](https://cohere.com/)
-[![Docker](https://img.shields.io/badge/Docker-Compatible-blue?style=for-the-badge&logo=docker)](https://www.docker.com/)
 
 O **CloudScale RAG Agent** é uma solução corporativa de Retrieval-Augmented Generation (RAG) desenvolvida para a **CloudScale SaaS Solutions** (plataforma digital B2B de gestão multi-cloud). O sistema permite que colaboradores de todas as áreas (Suporte, Vendas, RH, Engenharia, Financeiro e Jurídico) realizem consultas complexas sobre a base de conhecimento interna e obtenham respostas imediatas, precisas e referenciadas com base em documentos reais.
 
@@ -92,8 +91,8 @@ COHERE_MODEL=command-a-03-2025
 ADMIN_PASSWORD=defina-uma-senha
 ```
 
-### 4. Gerar Base de Dados Fictícia
-Execute o script gerador para criar os 8 arquivos corporativos exigidos na pasta `data/`:
+### 4. Base de Dados Fictícia
+Os 8 documentos corporativos já vêm prontos na pasta `data/` deste repositório. Caso queira regenerá-los do zero:
 ```bash
 python src/generate_data.py
 ```
@@ -103,7 +102,7 @@ Rode o servidor local:
 ```bash
 streamlit run src/app.py
 ```
-Acesse no seu navegador em: `http://localhost:8501`.
+Acesse no seu navegador em: `http://localhost:8501`. Na primeira execução (sem `faiss_index/` local), a base é indexada automaticamente a partir de `data/`.
 
 ---
 
@@ -126,48 +125,28 @@ Esse último exemplo demonstra a regra de conduta do prompt: o agente nunca inve
 
 ---
 
-## 🐳 Executando com Docker & Docker Compose
+## ☁️ Deploy na Nuvem - Streamlit Community Cloud
 
-Caso prefira rodar o projeto de forma conteinerizada:
+> **Status:** ⏳ Deploy ainda **não realizado** — pendente de publicação.
 
-1. Renomeie `.env.example` para `.env` e configure sua `GROQ_API_KEY`.
-2. Execute o build e inicialização dos containers:
-```bash
-docker-compose up -d --build
-```
-O container irá automaticamente instalar as dependências, rodar o `generate_data.py` na inicialização e expor a aplicação na porta `8501`.
+A aplicação é publicada gratuitamente no [Streamlit Community Cloud](https://streamlit.io/cloud), que builda direto a partir deste repositório (sem necessidade de Docker ou de gerenciar uma VM).
 
----
-
-## ☁️ Deploy na Nuvem - Oracle Cloud Infrastructure (OCI)
-
-> **Status:** ⏳ Deploy na OCI ainda **não realizado** — a infraestrutura (VM Compute gratuita) será contratada em breve. Os arquivos de deploy (`Dockerfile`, `docker-compose.yml`, `deploy_oci.sh`) já estão prontos e testados localmente via Docker; falta apenas provisionar a VM e executar os passos abaixo.
-
-A aplicação está configurada para deploy simplificado em instâncias Compute da OCI rodando Ubuntu 22.04 LTS ou similar.
-
-### Passos de Deploy na VM da OCI:
-1. Clone o repositório dentro da VM:
-   ```bash
-   git clone <URL_DO_REPOSITORIO>
-   cd alura-challenge-agente-saas
+### Passos de Deploy:
+1. Acesse [share.streamlit.io](https://share.streamlit.io/) e conecte sua conta do GitHub.
+2. Clique em **"New app"** e selecione este repositório (`victorsitta/CloudScale-SaaS-Solutions`), branch `main` e o arquivo principal `alura-challenge-agente-saas/src/app.py`.
+3. Em **"Advanced settings" → "Secrets"**, cole as variáveis de ambiente (equivalentes ao `.env` local):
+   ```toml
+   LLM_PROVIDER = "cohere"
+   COHERE_API_KEY = "sua-chave-aqui"
+   COHERE_MODEL = "command-a-03-2025"
+   ADMIN_PASSWORD = "defina-uma-senha"
    ```
-2. Crie e configure o arquivo `.env` com a sua chave da Groq.
-3. Torne o script de deploy executável e rode-o para configurar as regras do Docker e Firewall:
-   ```bash
-   chmod +x deploy_oci.sh
-   ./deploy_oci.sh
-   ```
-4. Suba a aplicação conteinerizada:
-   ```bash
-   docker-compose up -d --build
-   ```
-5. Acesse o agente através do IP Público da VM na porta 8501:
-   - URL: `http://130.61.xxx.xxx:8501`
+4. Clique em **"Deploy"**. A base de conhecimento oficial (`data/`) é indexada automaticamente na primeira execução — não é necessário desbloquear a área administrativa para isso.
+5. A aplicação fica disponível em uma URL pública no formato `https://<nome-do-app>.streamlit.app`.
 
-### Demonstração do Agente no OCI:
+### Demonstração do Agente em Produção:
 > [!IMPORTANT]
-> **[INSERIR IMAGEM OU GIF DO AGENTE RODANDO NA NUVEM ORACLE OCI AQUI]**
-> Exemplo de IP Público ativo na OCI: `http://130.61.22.95:8501`
+> **[INSERIR LINK PÚBLICO E/OU PRINT DO AGENTE RODANDO NO STREAMLIT COMMUNITY CLOUD AQUI]**
 
 ---
 
