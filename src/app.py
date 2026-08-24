@@ -462,14 +462,6 @@ with st.sidebar:
         st.markdown(f'<span class="status-badge status-connected">API {PROVIDER_NAME}: Conectada</span>', unsafe_allow_html=True)
         # Mostrar o modelo ativo
         st.caption(f"Modelo: `{PROVIDER_MODEL}`")
-        if st.button(
-            "🔒 Alterar Chave de API" if not st.session_state.admin_unlocked else "Alterar Chave de API",
-            disabled=not st.session_state.admin_unlocked,
-            help=None if st.session_state.admin_unlocked else "Desbloqueie a Área Administrativa para alterar a chave.",
-        ):
-            st.session_state.api_key = ""
-            os.environ[PROVIDER_ENV_VAR] = ""
-            st.rerun()
             
     st.divider()
 
