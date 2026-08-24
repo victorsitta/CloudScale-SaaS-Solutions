@@ -1,5 +1,7 @@
 import os
 import shutil
+import html
+import secrets as pysecrets
 from pathlib import Path
 import streamlit as st
 from langchain_core.documents import Document
@@ -403,12 +405,17 @@ def render_sources(sources_data):
     """Renderiza os cards de fontes consultadas dentro de um expander padronizado."""
     with st.expander(f"📌 Fontes Consultadas ({len(sources_data)})"):
         for src in sources_data:
-            ext = str(src["file_type"]).upper().lstrip(".")
+            ext = html.escape(str(src["file_type"]).upper().lstrip("."))
             icon = FILE_ICONS.get(ext, "📄")
+            # Escapa nome de arquivo e conteúdo do documento: ambos podem vir de
+            # um upload ou de texto extraído de arquivos, e são injetados via
+            # unsafe_allow_html — sem escape seriam um vetor de XSS.
+            safe_name = html.escape(str(src["file_name"]))
+            safe_content = html.escape(str(src["content"]))
             st.markdown(
                 f'<div class="source-card">'
-                f'<div class="source-meta">{icon} {src["file_name"]} <span style="color:#94A3B8; font-weight:500;">· {ext}</span></div>'
-                f'<div class="source-content">{src["content"]}</div>'
+                f'<div class="source-meta">{icon} {safe_name} <span style="color:#94A3B8; font-weight:500;">· {ext}</span></div>'
+                f'<div class="source-content">{safe_content}</div>'
                 f'</div>',
                 unsafe_allow_html=True
             )
@@ -432,7 +439,7 @@ with st.sidebar:
         with st.expander("🔒 Área Administrativa (requer senha)"):
             admin_pwd = st.text_input("Senha de administrador:", type="password", key="admin_pwd_input")
             if st.button("Desbloquear", use_container_width=True):
-                if config.ADMIN_PASSWORD and admin_pwd == config.ADMIN_PASSWORD:
+                if config.ADMIN_PASSWORD and pysecrets.compare_digest(admin_pwd, config.ADMIN_PASSWORD):
                     st.session_state.admin_unlocked = True
                     st.toast("Ações administrativas desbloqueadas!", icon="🔓")
                     st.rerun()
@@ -502,10 +509,12 @@ with st.sidebar:
     )
 
     if uploaded_file is not None and st.session_state.admin_unlocked:
-        # Salva o arquivo na pasta de uploads
-        upload_path = config.UPLOAD_DIR / uploaded_file.name
-        
-        with st.spinner(f"Processando {uploaded_file.name}..."):
+        # Usa apenas o nome base do arquivo (sem diretórios) para impedir que um
+        # nome como "../../algo" escreva fora da pasta de uploads (path traversal).
+        safe_upload_name = Path(uploaded_file.name).name
+        upload_path = config.UPLOAD_DIR / safe_upload_name
+
+        with st.spinner(f"Processando {safe_upload_name}..."):
             # Escreve o arquivo fisicamente
             with open(upload_path, "wb") as f:
                 f.write(uploaded_file.getbuffer())
@@ -518,7 +527,7 @@ with st.sidebar:
                 if rag_engine:
                     success = rag_engine.add_documents_to_store(new_docs)
                     if success:
-                        st.toast(f"{uploaded_file.name} indexado com sucesso!", icon="✅")
+                        st.toast(f"{safe_upload_name} indexado com sucesso!", icon="✅")
                         st.rerun()
                     else:
                         st.error("Erro ao adicionar documento no banco de vetores.")
@@ -538,10 +547,14 @@ with st.sidebar:
             ext = file_path.suffix.upper()[1:]
             origin_badge = "🏢" if origin == "Oficial" else "👤"
             file_icon = FILE_ICONS.get(ext, "📄")
+            # Nome do arquivo pode vir de upload — escapa antes de injetar via
+            # unsafe_allow_html para evitar XSS armazenado.
+            safe_file_name = html.escape(file_path.name)
+            safe_ext = html.escape(ext)
             st.markdown(
                 f'<div class="doc-item">'
-                f'<span>{file_icon} {origin_badge} {file_path.name}</span>'
-                f'<span class="doc-item-ext">{ext}</span>'
+                f'<span>{file_icon} {origin_badge} {safe_file_name}</span>'
+                f'<span class="doc-item-ext">{safe_ext}</span>'
                 f'</div>',
                 unsafe_allow_html=True
             )

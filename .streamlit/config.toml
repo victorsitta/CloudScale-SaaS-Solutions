@@ -9,3 +9,5 @@ gatherUsageStats = false
 
 [client]
 toolbarMode = "minimal"
+# Nunca mostra tracebacks/detalhes internos de exceção para o visitante
+showErrorDetails = "none"

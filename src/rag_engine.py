@@ -129,8 +129,9 @@ class RAGEngine:
             retriever = self.get_retriever()
             retrieved_docs = retriever.invoke(question)
         except Exception as e:
-            # Caso o banco não esteja carregado
-            return f"Desculpe, a base de conhecimento não está indexada. Detalhe: {e}", []
+            # Detalhe completo só no log do servidor — nunca exposto ao usuário final
+            print(f"[ERRO] Falha na busca por similaridade: {e}")
+            return "Desculpe, a base de conhecimento não está indexada.", []
             
         # 2. Formata o contexto
         context_parts = []
@@ -191,4 +192,7 @@ class RAGEngine:
             return response, retrieved_docs
 
         except Exception as e:
-            return f"Ocorreu um erro ao consultar o modelo {provider.upper()}: {str(e)}", retrieved_docs
+            # Detalhe completo só no log do servidor — evita vazar informações
+            # internas (stack trace, headers, etc.) para qualquer visitante.
+            print(f"[ERRO] Falha ao consultar o modelo {provider.upper()}: {e}")
+            return f"Ocorreu um erro ao consultar o modelo {provider.upper()}. Tente novamente em instantes.", retrieved_docs
