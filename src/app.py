@@ -314,6 +314,13 @@ st.markdown("""
     div[data-testid="stChatInput"] * {
         color: #FFFFFF !important;
     }
+    /* Esconde a barra de ferramentas padrão do Streamlit (ícone do GitHub,
+       menu "⋮", botão "Deploy") — reforço em CSS caso o toolbarMode do
+       config.toml não seja suficiente no ambiente do Streamlit Cloud. */
+    #MainMenu, header[data-testid="stHeader"], .stAppDeployButton, footer {
+        visibility: hidden;
+        height: 0;
+    }
 </style>
 """, unsafe_allow_html=True)
 

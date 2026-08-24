@@ -8,6 +8,6 @@ headless = true
 gatherUsageStats = false
 
 [client]
-toolbarMode = "minimal"
+toolbarMode = "none"
 # Nunca mostra tracebacks/detalhes internos de exceção para o visitante
 showErrorDetails = "none"
